@@ -192,6 +192,7 @@ fn run_test_case() {
     // Save the results to the database
     save_to_db(&user_accounts, &checking_accounts).unwrap();
     println!("Test case completed and data saved to db.json.");
+}
 fn transfer_funds(
     checking_accounts: &mut Vec<CheckingAccount>,
     from_account_owner_id: usize,
