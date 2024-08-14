@@ -14,7 +14,6 @@ use thiserror::Error;
 const DB_PATH: &str = "./data/db.json";
 const RUN_TEST_CASE: bool = true;
 
-
 #[derive(Serialize, Deserialize, Clone)]
 struct UserAccount {
     id: usize,
@@ -146,6 +145,39 @@ fn get_account_transactions(checking_accounts: &Vec<CheckingAccount>, account_ow
     }
 }
 
+fn transfer_funds(
+    checking_accounts: &mut Vec<CheckingAccount>,
+    from_account_owner_id: usize,
+    to_account_owner_id: usize,
+    amount: usize,
+) {
+    let mut from_account = None;
+    let mut to_account = None;
+
+    for account in checking_accounts.iter_mut() {
+        if account.account_owner_id == from_account_owner_id {
+            from_account = Some(account);
+        } else if account.account_owner_id == to_account_owner_id {
+            to_account = Some(account);
+        }
+    }
+
+    match (from_account, to_account) {
+        (Some(from), Some(to)) => {
+            if from.balance >= amount {
+                from.balance -= amount;
+                to.balance += amount;
+                from.last_transaction = chrono::offset::Utc::now();
+                to.last_transaction = chrono::offset::Utc::now();
+                println!("Transferred {} from account {} to account {}.", amount, from_account_owner_id, to_account_owner_id);
+            } else {
+                println!("Insufficient funds in the source account.");
+            }
+        }
+        _ => println!("One or both accounts not found."),
+    }
+}
+
 fn run_test_case() {
     let mut rng = rand::thread_rng();
 
@@ -193,35 +225,4 @@ fn run_test_case() {
     save_to_db(&user_accounts, &checking_accounts).unwrap();
     println!("Test case completed and data saved to db.json.");
 }
-fn transfer_funds(
-    checking_accounts: &mut Vec<CheckingAccount>,
-    from_account_owner_id: usize,
-    to_account_owner_id: usize,
-    amount: usize,
-) {
-    let mut from_account = None;
-    let mut to_account = None;
 
-    for account in checking_accounts.iter_mut() {
-        if account.account_owner_id == from_account_owner_id {
-            from_account = Some(account);
-        } else if account.account_owner_id == to_account_owner_id {
-            to_account = Some(account);
-        }
-    }
-
-    match (from_account, to_account) {
-        (Some(from), Some(to)) => {
-            if from.balance >= amount {
-                from.balance -= amount;
-                to.balance += amount;
-                from.last_transaction = chrono::offset::Utc::now();
-                to.last_transaction = chrono::offset::Utc::now();
-                println!("Transferred {} from account {} to account {}.", amount, from_account_owner_id, to_account_owner_id);
-            } else {
-                println!("Insufficient funds in the source account.");
-            }
-        }
-        _ => println!("One or both accounts not found."),
-    }
-}
