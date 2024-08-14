@@ -12,6 +12,7 @@ use std::thread;
 use std::time::{Duration, Instant};
 use thiserror::Error;
 const DB_PATH: &str = "./data/db.json";
+const RUN_TEST_CASE: bool = true;
 
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -44,6 +45,11 @@ pub enum Error {
 }
 
 fn main() -> Result<(), Error> {
+    if RUN_TEST_CASE {
+        run_test_case();
+        return Ok(());
+    }
+
     let mut user_accounts: Vec<UserAccount> = Vec::new();
     let mut checking_accounts: Vec<CheckingAccount> = Vec::new();
 
@@ -140,7 +146,53 @@ fn get_account_transactions(checking_accounts: &Vec<CheckingAccount>, account_ow
     }
 }
 
-fn transfer_funds(
+fn run_test_case() {
+    let mut rng = rand::thread_rng();
+
+    // Create random users
+    let mut user_accounts: Vec<UserAccount> = (1..=3)
+        .map(|i| create_user_account(
+            format!("User{}", i),
+            format!("{:02}/{:02}/199{}", rng.gen_range(1..=12), rng.gen_range(1..=28), rng.gen_range(0..=9)),
+            format!("{} Random St", rng.gen_range(100..=999)),
+            rng.gen_range(100_000_000..=999_999_999),
+        ))
+        .collect();
+
+    // Create checking accounts for each user
+    let mut checking_accounts: Vec<CheckingAccount> = user_accounts
+        .iter()
+        .map(|user| create_checking_account(user.id))
+        .collect();
+
+    // Add random balances to each checking account
+    for account in checking_accounts.iter_mut() {
+        account.balance = rng.gen_range(1000..=10_000);
+    }
+
+    // Perform random transfers
+    for _ in 0..5 {
+        let from_id = rng.gen_range(1..=3);
+        let to_id = rng.gen_range(1..=3);
+        let amount = rng.gen_range(100..=500);
+
+        if from_id != to_id {
+            transfer_funds(&mut checking_accounts, from_id, to_id, amount);
+        }
+    }
+
+    // Print final account balances
+    for account in &checking_accounts {
+        println!(
+            "Account Owner ID: {}, Balance: {}",
+            account.account_owner_id, account.balance
+        );
+    }
+
+    // Save the results to the database
+    save_to_db(&user_accounts, &checking_accounts).unwrap();
+    println!("Test case completed and data saved to db.json.");
+}
     checking_accounts: &mut Vec<CheckingAccount>,
     from_account_owner_id: usize,
     to_account_owner_id: usize,
