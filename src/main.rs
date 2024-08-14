@@ -172,7 +172,7 @@ fn run_test_case() {
 
     // Perform random transfers
     for _ in 0..5 {
-        let from_id = rng.gen_range(1..=3).into();
+        let from_id = rng.gen_range(1..=3);
         let to_id = rng.gen_range(1..=3);
         let amount = rng.gen_range(100..=500);
 
