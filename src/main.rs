@@ -142,8 +142,16 @@ fn transfer_funds(
     to_account_owner_id: usize,
     amount: usize,
 ) {
-    let from_account = checking_accounts.iter_mut().find(|a| a.account_owner_id == from_account_owner_id);
-    let to_account = checking_accounts.iter_mut().find(|a| a.account_owner_id == to_account_owner_id);
+    let mut from_account = None;
+    let mut to_account = None;
+
+    for account in checking_accounts.iter_mut() {
+        if account.account_owner_id == from_account_owner_id {
+            from_account = Some(account);
+        } else if account.account_owner_id == to_account_owner_id {
+            to_account = Some(account);
+        }
+    }
 
     match (from_account, to_account) {
         (Some(from), Some(to)) => {
