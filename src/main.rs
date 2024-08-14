@@ -24,7 +24,6 @@ struct UserAccount {
     social_security: u32,
     created_at: DateTime<Utc>,
     last_accessed: DateTime<Utc>,
-    Ok(())
 }
 struct CheckingAccount {
     account_owner_id: usize,
