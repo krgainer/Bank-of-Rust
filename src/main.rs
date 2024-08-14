@@ -193,10 +193,6 @@ fn run_test_case() {
     save_to_db(&user_accounts, &checking_accounts).unwrap();
     println!("Test case completed and data saved to db.json.");
 }
-    checking_accounts: &mut Vec<CheckingAccount>,
-    from_account_owner_id: usize,
-    to_account_owner_id: usize,
-    amount: usize,
 ) {
     let mut from_account = None;
     let mut to_account = None;
