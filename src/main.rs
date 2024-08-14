@@ -24,6 +24,7 @@ struct UserAccount {
     social_security: u32,
     created_at: DateTime<Utc>,
     last_accessed: DateTime<Utc>,
+    Ok(())
 }
 struct CheckingAccount {
     account_owner_id: usize,
@@ -42,7 +43,7 @@ pub enum Error {
     ParseDBError(#[from] serde_json::Error),
 }
 
-fn main() {
+fn main() -> Result<(), Error> {
     let mut user_accounts: Vec<UserAccount> = Vec::new();
     let mut checking_accounts: Vec<CheckingAccount> = Vec::new();
 
@@ -57,8 +58,20 @@ fn main() {
     let checking_account = create_checking_account(user_accounts[0].id);
     checking_accounts.push(checking_account);
 
+    save_to_db(&user_accounts, &checking_accounts)?;
     println!("User and checking account created successfully.");
     create_user_account("John".to_string(), "01/01/1990".to_string(), "123 Main St".to_string(), 123456789);
+}
+
+fn save_to_db(user_accounts: &Vec<UserAccount>, checking_accounts: &Vec<CheckingAccount>) -> Result<(), Error> {
+    let db_data = serde_json::json!({
+        "user_accounts": user_accounts,
+        "checking_accounts": checking_accounts,
+    });
+
+    let db_json = serde_json::to_string_pretty(&db_data)?;
+    fs::write(DB_PATH, db_json)?;
+    Ok(())
 }
 
 fn create_user_account(
