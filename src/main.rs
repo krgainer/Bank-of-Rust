@@ -153,9 +153,9 @@ fn run_test_case() {
     let mut user_accounts: Vec<UserAccount> = (1..=3)
         .map(|i| create_user_account(
             format!("User{}", i),
-            format!("{:02}/{:02}/199{}", rng.gen_range(1..=12), rng.gen_range(1..=28), rng.gen_range(0..=9)),
-            format!("{} Random St", rng.gen_range(100..=999)),
-            rng.gen_range(100_000_000..=999_999_999),
+            format!("{:02}/{:02}/199{}", rng.gen_range(1..=12).into(), rng.gen_range(1..=28).into(), rng.gen_range(0..=9).into()),
+            format!("{} Random St", rng.gen_range(100..=999).into()),
+            rng.gen_range(100_000_000..=999_999_999).into(),
         ))
         .collect();
 
@@ -172,9 +172,9 @@ fn run_test_case() {
 
     // Perform random transfers
     for _ in 0..5 {
-        let from_id = rng.gen_range(1..=3);
-        let to_id = rng.gen_range(1..=3);
-        let amount = rng.gen_range(100..=500);
+        let from_id = rng.gen_range(1..=3).into();
+        let to_id = rng.gen_range(1..=3).into();
+        let amount = rng.gen_range(100..=500).into();
 
         if from_id != to_id {
             transfer_funds(&mut checking_accounts, from_id, to_id, amount);
