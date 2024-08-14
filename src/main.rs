@@ -174,7 +174,7 @@ fn run_test_case() {
     for _ in 0..5 {
         let from_id: usize = rng.gen_range(1..=3);
         let to_id: usize = rng.gen_range(1..=3);
-        let amount: usize = rng.gen_range(100..=500);
+        let amount: usize = rng.gen_range(100..=500) as usize;
 
         if from_id != to_id {
             transfer_funds(&mut checking_accounts, from_id, to_id, amount);
