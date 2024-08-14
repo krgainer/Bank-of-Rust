@@ -43,10 +43,30 @@ pub enum Error {
 }
 
 fn main() {
+    let mut user_accounts: Vec<UserAccount> = Vec::new();
+    let mut checking_accounts: Vec<CheckingAccount> = Vec::new();
+
+    let user = create_user_account(
+        "John".to_string(),
+        "01/01/1990".to_string(),
+        "123 Main St".to_string(),
+        123456789,
+    );
+    user_accounts.push(user);
+
+    let checking_account = create_checking_account(user_accounts[0].id);
+    checking_accounts.push(checking_account);
+
+    println!("User and checking account created successfully.");
     create_user_account("John".to_string(), "01/01/1990".to_string(), "123 Main St".to_string(), 123456789);
 }
 
-fn create_user_account(name: String, date_of_birth: String,address: String,social_security: u32) -> UserAccount {
+fn create_user_account(
+    name: String,
+    date_of_birth: String,
+    address: String,
+    social_security: u32,
+) -> UserAccount {
     UserAccount {
         id: 1,
         name: name,
@@ -59,8 +79,14 @@ fn create_user_account(name: String, date_of_birth: String,address: String,socia
     }
 }
 
-fn create_checking_account() {
-    
+fn create_checking_account(account_owner_id: usize) -> CheckingAccount {
+    CheckingAccount {
+        account_owner_id,
+        account_type: "Checking".to_string(),
+        balance: 0,
+        created_at: chrono::offset::Utc::now(),
+        last_transaction: chrono::offset::Utc::now(),
+    }
 }
 
 fn get_account_details() {
