@@ -70,6 +70,9 @@ fn save_to_db(user_accounts: &Vec<UserAccount>, checking_accounts: &Vec<Checking
     });
 
     let db_json = serde_json::to_string_pretty(&db_data)?;
+    if !std::path::Path::new(DB_PATH).exists() {
+        fs::File::create(DB_PATH)?;
+    }
     fs::write(DB_PATH, db_json)?;
     Ok(())
 }
