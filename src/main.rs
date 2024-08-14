@@ -89,18 +89,62 @@ fn create_checking_account(account_owner_id: usize) -> CheckingAccount {
     }
 }
 
-fn get_account_details() {
-    
+fn get_account_details(user_accounts: &Vec<UserAccount>, user_id: usize) {
+    if let Some(user) = user_accounts.iter().find(|&u| u.id == user_id) {
+        println!("User ID: {}", user.id);
+        println!("Name: {}", user.name);
+        println!("Active: {}", user.active);
+        println!("Date of Birth: {}", user.date_of_birth);
+        println!("Address: {}", user.address);
+        println!("Social Security: {}", user.social_security);
+        println!("Created At: {}", user.created_at);
+        println!("Last Accessed: {}", user.last_accessed);
+    } else {
+        println!("User not found.");
+    }
 }
 
-fn get_account_balance() {
-    
+fn get_account_balance(checking_accounts: &Vec<CheckingAccount>, account_owner_id: usize) {
+    if let Some(account) = checking_accounts.iter().find(|&a| a.account_owner_id == account_owner_id) {
+        println!("Account Owner ID: {}", account.account_owner_id);
+        println!("Account Type: {}", account.account_type);
+        println!("Balance: {}", account.balance);
+        println!("Created At: {}", account.created_at);
+        println!("Last Transaction: {}", account.last_transaction);
+    } else {
+        println!("Account not found.");
+    }
 }
 
-fn get_account_transactions() {
-    
+fn get_account_transactions(checking_accounts: &Vec<CheckingAccount>, account_owner_id: usize) {
+    if let Some(account) = checking_accounts.iter().find(|&a| a.account_owner_id == account_owner_id) {
+        println!("Last Transaction Date: {}", account.last_transaction);
+    } else {
+        println!("Account not found.");
+    }
 }
 
-fn TransferFunds() {
-      
+fn transfer_funds(
+    checking_accounts: &mut Vec<CheckingAccount>,
+    from_account_owner_id: usize,
+    to_account_owner_id: usize,
+    amount: usize,
+) {
+    let from_account = checking_accounts.iter_mut().find(|a| a.account_owner_id == from_account_owner_id);
+    let to_account = checking_accounts.iter_mut().find(|a| a.account_owner_id == to_account_owner_id);
+
+    match (from_account, to_account) {
+        (Some(from), Some(to)) => {
+            if from.balance >= amount {
+                from.balance -= amount;
+                to.balance += amount;
+                from.last_transaction = chrono::offset::Utc::now();
+                to.last_transaction = chrono::offset::Utc::now();
+                println!("Transferred {} from account {} to account {}.", amount, from_account_owner_id, to_account_owner_id);
+            } else {
+                println!("Insufficient funds in the source account.");
+            }
+        }
+        _ => println!("One or both accounts not found."),
+    }
 }
