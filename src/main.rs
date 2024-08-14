@@ -173,8 +173,8 @@ fn run_test_case() {
     // Perform random transfers
     for _ in 0..5 {
         let from_id = rng.gen_range(1..=3).into();
-        let to_id = rng.gen_range(1..=3).into();
-        let amount = rng.gen_range(100..=500).into();
+        let to_id = rng.gen_range(1..=3);
+        let amount = rng.gen_range(100..=500);
 
         if from_id != to_id {
             transfer_funds(&mut checking_accounts, from_id, to_id, amount);
