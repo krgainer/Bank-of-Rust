@@ -25,6 +25,7 @@ struct UserAccount {
     created_at: DateTime<Utc>,
     last_accessed: DateTime<Utc>,
 }
+#[derive(Serialize, Deserialize, Clone)]
 struct CheckingAccount {
     account_owner_id: usize,
     account_type: String,
@@ -59,7 +60,7 @@ fn main() -> Result<(), Error> {
 
     save_to_db(&user_accounts, &checking_accounts)?;
     println!("User and checking account created successfully.");
-    create_user_account("John".to_string(), "01/01/1990".to_string(), "123 Main St".to_string(), 123456789);
+    Ok(())
 }
 
 fn save_to_db(user_accounts: &Vec<UserAccount>, checking_accounts: &Vec<CheckingAccount>) -> Result<(), Error> {
